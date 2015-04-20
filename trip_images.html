@@ -1,5 +1,33 @@
 <html>
 <head>
+<style>
+.image-carousel {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+.image-wrapper-wrapper {
+  position: absolute;
+}
+.image-carousel-left { left: 0; }
+.image-carousel-right { right: 0; }
+.image-carousel-link {
+  z-index: 1;
+  position: absolute;
+  bottom: 0;
+  color: white;
+  background-color: black;
+  padding: 0 1em;
+}
+.image-wrapper {
+  width: 200px;
+  height: 200px;
+  float: left;
+}
+
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <script>
 
@@ -15,16 +43,91 @@ request = {
   travelMode: google.maps.TravelMode[travelMode]
 };
 
+
+bearingBetween = function(point1, point2) {
+  var lat1 = point1.lat()*(Math.PI / 180.0);
+  var lon1 = point1.lng()*(Math.PI / 180.0);
+  var lat2 = point2.lat()*(Math.PI / 180.0);
+  var lon2 = point2.lng()*(Math.PI / 180.0);
+
+  var y = Math.sin(lon2-lon1) * Math.cos(lat2);
+  var x = Math.cos(lat1)*Math.sin(lat2) -
+    Math.sin(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1);
+  return Math.atan2(y, x)*(180.0 / Math.PI);
+}
+
+createImageCarousel = function(urls) {
+  $imageCarousel = $('<div class="image-carousel" data-index="0">');
+  $imageCarousel.append('<a href="javascript:void(0)" class="image-carousel-link image-carousel-left">&larr;</a>');
+  $imageCarousel.append('<a href="javascript:void(0)" class="image-carousel-link image-carousel-right">&rarr;</a>');
+  $imageWrapperWrapper = $('<div class="image-wrapper-wrapper" style="width: '+200*urls.length+'px">');
+  urls.forEach(function(url, i) {
+    $imageWrapper = $("<div class='image-wrapper' data-src='"+url+"'></div>");
+    if (i == 0) $imageWrapper.append("<img src='"+url+"'>");
+    $imageWrapperWrapper.append($imageWrapper);
+  });
+  $imageCarousel.append($imageWrapperWrapper);
+  return $imageCarousel;
+};
+
+rotateImageCarousel = function($imageCarousel, n) {
+  length = $imageCarousel.find('.image-wrapper').length;
+  index = parseInt($imageCarousel.attr('data-index')) + n;
+  if (index == length || index == -1) { return; }
+  $imageCarousel.attr('data-index', index);
+  $imageCarousel.find('.image-wrapper-wrapper').css('left', -200*index);
+  $imageWrapper = $($imageCarousel.find('.image-wrapper')[index]);
+  if ($imageWrapper.find('img').length == 0) {
+    $img = $('<img>');
+    $img.attr('src', $imageWrapper.attr('data-src'));
+    $imageWrapper.append($img);
+  }
+}
+
+$(document).ready(function() {
+  $('body').on('click', '.image-carousel-left', function() {
+    rotateImageCarousel($(this).closest('.image-carousel'), -1);
+  });
+  $('body').on('click', '.image-carousel-right', function() {
+    rotateImageCarousel($(this).closest('.image-carousel'), 1);
+  });
+});
+
 directionsService.route(request, function(response, status) {
   var html = "<ul>";
   response.routes[0].legs.forEach(function(leg) {
 
-    leg.steps.forEach(function(step) {
-      html += "<li>"+"<h3>"+step.instructions+"</h3>";
-      step.lat_lngs.forEach(function(point) {
-        html += '<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=' + point.toString().replace(/[\(\) ]/g, '') + '">';
+    leg.steps.forEach(function(step, j) {
+      $stepItem = $('<li>');
+      $stepItem.append("<h3>"+step.instructions+"</h3>");
+      urls = [];
+      step.lat_lngs.forEach(function(point, i) {
+        var bearing;
+        if (i == 0) {
+          if (j == 0) {
+            bearing = bearingBetween(point, step.lat_lngs[i+1]);
+          } else {
+            bearing1 = bearingBetween(leg.steps[j-1].lat_lngs[leg.steps[j-1].lat_lngs.length-1], point);
+            bearing2 = bearingBetween(point, step.lat_lngs[i+1]);
+            bearing = (bearing1 + bearing2)/2.0; 
+          }
+        } else if (i == step.lat_lngs.length-1) {
+          if (j == leg.steps.length-1) {
+            bearing = bearingBetween(step.lat_lngs[i-1], point);
+          } else {
+            bearing1 = bearingBetween(step.lat_lngs[i-1], point);
+            bearing2 = bearingBetween(point, leg.steps[j+1].lat_lngs[0]);
+            bearing = (bearing1 + bearing2)/2.0; 
+          }
+        } else {
+          bearing1 = bearingBetween(step.lat_lngs[i-1], point);
+          bearing2 = bearingBetween(point, step.lat_lngs[i+1]);
+          bearing = (bearing1 + bearing2)/2.0; 
+        }
+        urls.push('https://maps.googleapis.com/maps/api/streetview?size=200x200&heading='+bearing+'&location=' + point.toString().replace(/[\(\) ]/g, ''));
       });
-      html += "</li>";
+      $stepItem.append(createImageCarousel(urls));
+      html += $stepItem.html();
     });
   });
   html += "</ul>";
