@@ -2,6 +2,7 @@
   #streetview-map
   #birdseye-map
   #directions-container
+    %ul#text-directions
   #directions-form
     .form-friend
       %label From
@@ -14,13 +15,16 @@
       %br
       %select#travel-mode
         %option{value: 'DRIVING'} Driving
-        %option{value: 'BICYCLNG'} Biking
+        %option{value: 'BICYCLING'} Biking
         %option{value: 'WALKING'} Walking
     .form-friend
       %input#submit{type: 'submit'}
   #slideshow-controls
-    %button#play-slideshow Play
-    %select#slideshow-speed
-      %option Slow
-      %option Medium
-      %option Fast
+    -#%button#play-slideshow Play
+    -#%select#slideshow-speed
+      -#%option Slow
+      -#%option Medium
+      -#%option Fast
+    -#%br
+    %button#prev-image Prev
+    %button#next-image Next
