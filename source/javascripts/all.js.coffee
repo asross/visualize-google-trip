@@ -16,6 +16,10 @@ $ ->
   window.directionsService = new google.maps.DirectionsService()
   window.streetViewMap = new google.maps.StreetViewPanorama(document.getElementById('streetview-map'), position: fenway)
   window.birdsEyeMap = new google.maps.Map(document.getElementById('birdseye-map'), center: fenway, zoom: 14)
+  window.directionsRenderer = new google.maps.DirectionsRenderer()
+  window.mapMarker = new google.maps.Marker(position: fenway)
+  mapMarker.setMap(birdsEyeMap)
+  directionsRenderer.setMap(birdsEyeMap)
 
   requestRoute = (request) ->
     directionsService.route request, (response, status) ->
@@ -42,6 +46,7 @@ $ ->
           bearing = (bearing1 + bearing2)/2.0
         pointsWithBearings.push([point, bearing])
 
+      directionsRenderer.setDirections(response)
       window.instructions = instructions
       window.pointsOfView = pointsWithBearings
       window.stepIndex = 0
@@ -52,6 +57,8 @@ $ ->
     streetViewMap.setPosition(pov[0])
     streetViewMap.setPov(heading: pov[1], pitch: 0)
     birdsEyeMap.setCenter(pov[0])
+    birdsEyeMap.setZoom(14)
+    mapMarker.setPosition(pov[0])
 
     $list = $('ul#text-directions')
     $list.html('')
