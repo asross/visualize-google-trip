@@ -46,6 +46,26 @@ input[type='text'] {
   width: 95%;
 }
 
-#text-directions .reached {
+#text-directions li {
+  position: relative;
+}
+#text-directions li span {
+  position: relative;
+  z-index: 1;
+}
+#text-directions .progress-indicator {
+  height: 1.5em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
   background-color: yellow;
+}
+#text-directions {
+  list-style: none;
+  margin: 0;
+  padding: 20px;
+}
+#text-directions li a {
+  margin-right: 0.5em;
 }

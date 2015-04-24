@@ -55,10 +55,27 @@ $ ->
 
     $list = $('ul#text-directions')
     $list.html('')
-    instructions.forEach (inst) ->
+    instructions.forEach (inst, i) ->
+      index = inst[0]
+      text = inst[1]
+
       $item = $("<li>")
-      $item.html(inst[1])
-      $item.addClass('reached') if inst[0] <= stepIndex
+      $item.html("<span><a href='javascript:void(0)' data-index='"+index+"'>🔗</a>" + text+"</span>")
+
+      if i == instructions.length-1
+        nextIndex = pointsOfView.length-1
+      else
+        nextIndex = instructions[i+1][0]
+
+      $progress = $("<div class='progress-indicator'>")
+      if stepIndex >= nextIndex
+        $progress.css 'width', '100%'
+      else if stepIndex >= index
+        stepsTotal = nextIndex - index
+        stepsSoFar = stepIndex - index
+        $progress.css 'width', 100*(stepsSoFar/(1.0*stepsTotal))+'%'
+
+      $progress.appendTo $item
       $item.appendTo $list
 
   prevImage = ->
@@ -82,3 +99,7 @@ $ ->
       travelMode: google.maps.TravelMode[travelMode]
     }
     requestRoute(request)
+
+  $('body').on 'click', '#text-directions a', ->
+    window.stepIndex = parseInt($(@).attr('data-index'))
+    updateMaps()
