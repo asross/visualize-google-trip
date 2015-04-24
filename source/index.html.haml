@@ -1,0 +1,26 @@
+#trip-visualizer
+  #streetview-map
+  #birdseye-map
+  #directions-container
+  #directions-form
+    .form-friend
+      %label From
+      %input#origin{type: 'text', value: ''}
+    .form-friend
+      %label To
+      %input#destination{type: 'text', value: ''}
+    .form-friend
+      %label By
+      %br
+      %select#travel-mode
+        %option{value: 'DRIVING'} Driving
+        %option{value: 'BICYCLNG'} Biking
+        %option{value: 'WALKING'} Walking
+    .form-friend
+      %input#submit{type: 'submit'}
+  #slideshow-controls
+    %button#play-slideshow Play
+    %select#slideshow-speed
+      %option Slow
+      %option Medium
+      %option Fast
