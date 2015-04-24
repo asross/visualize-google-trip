@@ -6,17 +6,17 @@
   #directions-form
     .form-friend
       %label From
-      %input#origin{type: 'text', value: ''}
+      %input#origin{type: 'text', value: default_origin}
     .form-friend
       %label To
-      %input#destination{type: 'text', value: ''}
+      %input#destination{type: 'text', value: default_destination}
     .form-friend
       %label By
       %br
       %select#travel-mode
+        %option{value: 'WALKING'} Walking
         %option{value: 'DRIVING'} Driving
         %option{value: 'BICYCLING'} Biking
-        %option{value: 'WALKING'} Walking
     .form-friend
       %input#submit{type: 'submit'}
   #slideshow-controls

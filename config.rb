@@ -1,3 +1,9 @@
+if ENV.key? 'STAGE'
+  Dotenv.load(".env-#{ENV['STAGE']}")
+else
+  Dotenv.load
+end
+
 ###
 # Compass
 ###
@@ -69,4 +75,14 @@ configure :build do
 
   # Or use a different image path
   # set :http_prefix, "/Content/images/"
+end
+
+helpers do
+  def default_origin
+    ENV.fetch('DEFAULT_ORIGIN', 'Central Square, Cambridge MA')
+  end
+
+  def default_destination
+    ENV.fetch('DEFAULT_DESTINATION', 'Park Street, Boston MA')
+  end
 end

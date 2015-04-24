@@ -111,3 +111,5 @@ $ ->
   $('body').on 'click', '#text-directions a', ->
     window.stepIndex = parseInt($(@).attr('data-index'))
     updateMaps()
+
+  $('#submit').click()
