@@ -2,6 +2,8 @@
 
 [This](http://visualize-google-trip.s3-website-us-west-2.amazonaws.com/) is a quick visualization that takes Google maps directions and turns them into an interactive slideshow. Hopefully it will give you a better sense of where you're going!
 
+![image](https://cloud.githubusercontent.com/assets/1022564/7327551/08cdcc40-ea9c-11e4-9c8d-15a1d73b5e8d.png)
+
 ## To download and develop yourself
 
 This site uses [middleman](http://middlemanapp.com/). After running `bundle` to
