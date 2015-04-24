@@ -80,7 +80,8 @@ $ ->
       else if stepIndex >= index
         stepsTotal = nextIndex - index
         stepsSoFar = stepIndex - index
-        $progress.css 'width', 100*(stepsSoFar/(1.0*stepsTotal))+'%'
+        progress = 100*(stepsSoFar/(1.0*stepsTotal))
+        $progress.css 'width', Math.max(progress, 1)+'%'
 
       $progress.appendTo $item
       $item.appendTo $list
