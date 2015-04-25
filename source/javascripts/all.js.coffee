@@ -98,12 +98,12 @@ $ ->
     updateMaps()
 
   $('#video-controls .progress-indicator-wrapper').click (e) ->
-    percentThrough = e.offsetX / (1.0*$(@).width())
+    percentThrough = (e.pageX-$(@).offset().left) / (1.0*$(@).width())
     window.stepIndex = Math.floor(percentThrough*(pointsOfView.length-1))
     updateMaps()
 
   $('#video-controls .progress-indicator-wrapper').mousemove (e) ->
-    percentThrough = 100*(e.offsetX / (1.0*$(@).width()))
+    percentThrough = 100*((e.pageX-$(@).offset().left) / (1.0*$(@).width()))
     $('.progress-indicator-hover').css 'width', Math.max(percentThrough, 1)+'%'
 
   $('#video-controls .progress-indicator-wrapper').mouseleave (e) ->
