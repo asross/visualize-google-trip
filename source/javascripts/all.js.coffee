@@ -1,3 +1,5 @@
+#= require ./deparam
+
 $ ->
   bearingBetween = (point1, point2) ->
     lat1 = point1.lat()*(Math.PI / 180.0)
@@ -151,12 +153,20 @@ $ ->
     request = {
       origin: originAddress,
       destination: destinationAddress,
-      travelMode: google.maps.TravelMode[travelMode]
+      travelMode: travelMode
     }
+    newHref = location.origin + '?' + $.param(request)
+    history.replaceState({}, document.title, newHref)
     requestRoute(request)
 
   $('body').on 'click', '#text-directions a', ->
     window.stepIndex = parseInt($(@).attr('data-index'))
     updateMaps()
+
+  if window.location.search
+    params = $.deparam(window.location.search.replace(/^\?/, ''))
+    $('#origin').val(params.origin) if params.origin
+    $('#destination').val(params.destination) if params.destination
+    $('#travel-mode').val(params.travelMode) if params.travelMode
 
   $('#submit').click()
