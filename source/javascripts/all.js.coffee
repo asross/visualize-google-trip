@@ -26,10 +26,12 @@ $ ->
       i = 0
       points = []
       instructions = []
+      $('#directions-summary').html('')
 
       response.routes[0].legs.forEach (leg) ->
+        $('#directions-summary').append("#{leg.distance.text}, #{leg.duration.text}")
         leg.steps.forEach (step) ->
-          instructions.push([i, step.instructions])
+          instructions.push([i, "#{step.instructions} (#{step.distance.text})"])
           step.lat_lngs.forEach (point) ->
             points.push(point)
             i += 1

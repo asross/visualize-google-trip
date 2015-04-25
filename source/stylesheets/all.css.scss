@@ -82,8 +82,21 @@ input[type='text'] {
   width: 280px;
 }
 
+#directions-summary {
+  margin: 20px;
+  margin-bottom: 10px;
+}
+
+#text-directions {
+  list-style: none;
+  margin: 0;
+  padding: 20px;
+  padding-top: 0;
+}
+
 #text-directions li {
   position: relative;
+  font-size: small;
 }
 
 #text-directions li span {
@@ -98,12 +111,6 @@ input[type='text'] {
   left: 0;
   z-index: 0;
   background-color: yellow;
-}
-
-#text-directions {
-  list-style: none;
-  margin: 0;
-  padding: 20px;
 }
 
 #text-directions li a {
