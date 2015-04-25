@@ -36,10 +36,9 @@ button {
   width: 30px;
   line-height: inherit;
   margin-top: 3px;
+  line-height: 20px;
 }
 button:not(#play) {
-  line-height: 20px;
-  font-size: 20px;
   font-family: menlo;
 }
 .progress-indicator-wrapper {
@@ -75,15 +74,12 @@ button:not(#play) {
 }
 
 #directions-form {
-  @include box;
-}
-
-#slideshow-controls {
-  @include box;
+  background-color: gray;
+  padding: 5px;
 }
 
 input[type='text'] {
-  width: 95%;
+  width: 280px;
 }
 
 #text-directions li {
