@@ -40,6 +40,10 @@ $ ->
           bearing = bearingBetween(point, points[i+1])
         else if i == points.length-1
           bearing = bearingBetween(points[i-1], point)
+        else if point.equals(points[i-1])
+          bearing = bearingBetween(point, points[i+1])
+        else if point.equals(points[i+1])
+          bearing = bearingBetween(points[i-1], point)
         else
           bearing1 = bearingBetween(points[i-1], point)
           bearing2 = bearingBetween(point, points[i+1])
