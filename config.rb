@@ -83,7 +83,7 @@ helpers do
   end
 
   def default_destination
-    ENV.fetch('DEFAULT_DESTINATION', 'Park Street, Boston MA')
+    ENV.fetch('DEFAULT_DESTINATION', 'Park Street Station, Boston MA')
   end
 end
 
