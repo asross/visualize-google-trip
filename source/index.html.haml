@@ -1,8 +1,18 @@
 #trip-visualizer
   #streetview-map
-  #birdseye-map
+  #video-controls
+    .progress-indicator-wrapper
+      .progress-indicator.progress-indicator-fixed
+      .progress-indicator.progress-indicator-hover
+    .video-buttons
+      %button#play.is-paused ►
+      %button#prev-waypoint «
+      %button#prev-image ‹
+      %button#next-image ›
+      %button#next-waypoint »
   #directions-container
     %ul#text-directions
+  #birdseye-map
   #directions-form
     .form-friend
       %label From
@@ -19,12 +29,3 @@
         %option{value: 'BICYCLING'} Biking
     .form-friend
       %input#submit{type: 'submit'}
-  #slideshow-controls
-    -#%button#play-slideshow Play
-    -#%select#slideshow-speed
-      -#%option Slow
-      -#%option Medium
-      -#%option Fast
-    -#%br
-    %button#prev-image Prev
-    %button#next-image Next

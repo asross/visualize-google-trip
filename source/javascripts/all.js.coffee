@@ -60,6 +60,9 @@ $ ->
     birdsEyeMap.setZoom(14)
     mapMarker.setPosition(pov[0])
 
+    percentThrough = 100*stepIndex/(1.0*(pointsOfView.length-1))
+    $('#video-controls .progress-indicator-fixed').css('width', Math.max(percentThrough, 1)+'%')
+
     $list = $('ul#text-directions')
     $list.html('')
     instructions.forEach (inst, i) ->
@@ -94,8 +97,46 @@ $ ->
     window.stepIndex = Math.min(stepIndex+1, pointsOfView.length-1)
     updateMaps()
 
+  $('#video-controls .progress-indicator-wrapper').click (e) ->
+    percentThrough = e.offsetX / (1.0*$(@).width())
+    window.stepIndex = Math.floor(percentThrough*(pointsOfView.length-1))
+    updateMaps()
+
+  $('#video-controls .progress-indicator-wrapper').mousemove (e) ->
+    percentThrough = 100*(e.offsetX / (1.0*$(@).width()))
+    $('.progress-indicator-hover').css 'width', Math.max(percentThrough, 1)+'%'
+
+  $('#video-controls .progress-indicator-wrapper').mouseleave (e) ->
+    $('.progress-indicator-hover').css 'width', 0
+
   $('#prev-image').click prevImage
   $('#next-image').click nextImage
+
+  $('#prev-waypoint').click ->
+    prev = 0
+    for inst in instructions.slice(0).reverse()
+      if inst[0] < stepIndex
+        prev = inst[0]; break
+    window.stepIndex = prev
+    updateMaps()
+
+  $('#next-waypoint').click ->
+    next = pointsOfView.length-1
+    for inst in instructions
+      if inst[0] > stepIndex
+        next = inst[0]; break
+    window.stepIndex = next
+    updateMaps()
+
+  $('#play').click ->
+    if $(@).hasClass('is-paused')
+      window.stepInterval = setInterval(nextImage, 500)
+      $(@).text('❚❚')
+      $(@).removeClass('is-paused')
+    else
+      clearInterval(window.stepInterval)
+      $(@).text('►')
+      $(@).addClass('is-paused')
 
   $('#submit').click ->
     originAddress = $('#origin').val()
