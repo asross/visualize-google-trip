@@ -158,6 +158,7 @@ $ ->
     newHref = location.origin + '?' + $.param(request)
     history.replaceState({}, document.title, newHref)
     requestRoute(request)
+    false
 
   $('body').on 'click', '#text-directions a', ->
     window.stepIndex = parseInt($(@).attr('data-index'))
