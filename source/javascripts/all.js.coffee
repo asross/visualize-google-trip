@@ -25,6 +25,8 @@ $ ->
 
   requestRoute = (request) ->
     directionsService.route request, (response, status) ->
+      if response.routes.length == 0
+        return alert("Google maps was unable to find a route between #{response.request.origin} and #{response.request.destination}. Error code: #{status}")
       i = 0
       points = []
       instructions = []
