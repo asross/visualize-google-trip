@@ -140,7 +140,7 @@ $ ->
 
   $('#play').click ->
     if $(@).hasClass('is-paused')
-      window.stepInterval = setInterval(nextImage, 500)
+      window.stepInterval = setInterval(nextImage, 1000)
       $(@).text('❚❚')
       $(@).removeClass('is-paused')
     else
