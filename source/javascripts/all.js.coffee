@@ -78,19 +78,19 @@ $ ->
 
     $list = $('ul#text-directions')
     $list.html('')
+
     instructions.forEach (inst, i) ->
       index = inst[0]
       text = inst[1]
-
       $item = $("<li>")
-      $item.html("<span><a href='javascript:void(0)' data-index='"+index+"'>🔗</a>" + text+"</span>")
+      $item.html("<span><a href='javascript:void(0)' data-index='"+index+"'>🔗</a>"+text+"</span>")
+      $progress = $("<div class='progress-indicator'>")
 
       if i == instructions.length-1
         nextIndex = pointsOfView.length-1
       else
         nextIndex = instructions[i+1][0]
 
-      $progress = $("<div class='progress-indicator'>")
       if stepIndex >= nextIndex
         $progress.css 'width', '100%'
       else if stepIndex >= index
@@ -102,44 +102,53 @@ $ ->
       $progress.appendTo $item
       $item.appendTo $list
 
-  prevImage = ->
-    window.stepIndex = Math.max(stepIndex-1, 0)
+  prevImageIndex = ->
+    Math.max(stepIndex-1, 0)
+
+  nextImageIndex = ->
+    Math.min(stepIndex+1, pointsOfView.length-1)
+
+  prevWaypointIndex = ->
+    for i in instructions.slice(0).reverse()
+      return i[0] if i[0] < stepIndex
+    return 0
+
+  nextWaypointIndex = ->
+    for i in instructions
+      return i[0] if i[0] > stepIndex
+    return pointsOfView.length-1
+
+  $('#prev-image').click prevImage = ->
+    window.stepIndex = prevImageIndex()
     updateMaps()
 
-  nextImage = ->
-    window.stepIndex = Math.min(stepIndex+1, pointsOfView.length-1)
+  $('#next-image').click nextImage = ->
+    window.stepIndex = nextImageIndex()
     updateMaps()
-
-  $('#video-controls .progress-indicator-wrapper').click (e) ->
-    percentThrough = (e.pageX-$(@).offset().left) / (1.0*$(@).width())
-    window.stepIndex = Math.floor(percentThrough*(pointsOfView.length-1))
-    updateMaps()
-
-  $('#video-controls .progress-indicator-wrapper').mousemove (e) ->
-    percentThrough = 100*((e.pageX-$(@).offset().left) / (1.0*$(@).width()))
-    $('.progress-indicator-hover').css 'width', Math.max(percentThrough, 1)+'%'
-
-  $('#video-controls .progress-indicator-wrapper').mouseleave (e) ->
-    $('.progress-indicator-hover').css 'width', 0
-
-  $('#prev-image').click prevImage
-  $('#next-image').click nextImage
 
   $('#prev-waypoint').click ->
-    prev = 0
-    for inst in instructions.slice(0).reverse()
-      if inst[0] < stepIndex
-        prev = inst[0]; break
-    window.stepIndex = prev
+    window.stepIndex = prevWaypointIndex()
     updateMaps()
 
   $('#next-waypoint').click ->
-    next = pointsOfView.length-1
-    for inst in instructions
-      if inst[0] > stepIndex
-        next = inst[0]; break
-    window.stepIndex = next
+    window.stepIndex = nextWaypointIndex()
     updateMaps()
+
+  $('body').on 'click', '#text-directions a', ->
+    window.stepIndex = parseInt($(@).attr('data-index'))
+    updateMaps()
+
+  $('#video-controls .progress-indicator-wrapper').click (e) ->
+    progress = (e.pageX-$(@).offset().left) / (1.0*$(@).width())
+    window.stepIndex = Math.floor(progress*(pointsOfView.length-1))
+    updateMaps()
+
+  $('#video-controls .progress-indicator-wrapper').mousemove (e) ->
+    progress = (e.pageX-$(@).offset().left) / (1.0*$(@).width())
+    $('.progress-indicator-hover').css 'width', Math.max(100*progress, 1)+'%'
+
+  $('#video-controls .progress-indicator-wrapper').mouseleave (e) ->
+    $('.progress-indicator-hover').css 'width', 0
 
   $('#play').click ->
     if $(@).hasClass('is-paused')
@@ -152,22 +161,13 @@ $ ->
       $(@).addClass('is-paused')
 
   $('#submit').click ->
-    originAddress = $('#origin').val()
-    destinationAddress = $('#destination').val()
-    travelMode = $('#travel-mode').val()
     request = {
-      origin: originAddress,
-      destination: destinationAddress,
-      travelMode: travelMode
-    }
-    newHref = location.origin + '?' + $.param(request)
-    history.replaceState({}, document.title, newHref)
+      origin: $('#origin').val(),
+      destination: $('#destination').val(),
+      travelMode: $('#travel-mode').val() }
+    history.replaceState({}, document.title, "#{location.origin}?#{$.param(request)}")
     requestRoute(request)
     false
-
-  $('body').on 'click', '#text-directions a', ->
-    window.stepIndex = parseInt($(@).attr('data-index'))
-    updateMaps()
 
   if window.location.search
     params = $.deparam(window.location.search.replace(/^\?/, ''))
