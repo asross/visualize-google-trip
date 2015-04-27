@@ -67,10 +67,14 @@ $ ->
 
   updateMaps = ->
     pov = pointsOfView[stepIndex]
-    streetViewMap.setPosition(pov[0])
-    streetViewMap.setPov(heading: pov[1], pitch: 0)
-    birdsEyeMap.setCenter(pov[0])
-    birdsEyeMap.setZoom(14)
+    streetViewMap.setValues(
+      position: pov[0],
+      pov: { heading: pov[1], pitch: 0 }
+    )
+    birdsEyeMap.setValues(
+      center: pov[0],
+      zoom: 14
+    )
     mapMarker.setPosition(pov[0])
 
     percentThrough = 100*stepIndex/(1.0*(pointsOfView.length-1))
