@@ -1,6 +1,10 @@
 #= require ./deparam
 
 $ ->
+  approxEqual = (point1, point2) ->
+    return false unless point1 && point2
+    point1.lat().toPrecision(6) == point2.lat().toPrecision(6) && point2.lng().toPrecision(6) == point2.lng().toPrecision(6)
+
   bearingBetween = (point1, point2) ->
     lat1 = point1.lat()*(Math.PI / 180.0)
     lon1 = point1.lng()*(Math.PI / 180.0)
@@ -31,24 +35,23 @@ $ ->
       points = []
       instructions = []
       $('#directions-summary').html('')
+      prevPoint = null
 
       response.routes[0].legs.forEach (leg) ->
         $('#directions-summary').append("#{leg.distance.text}, #{leg.duration.text}")
         leg.steps.forEach (step) ->
           instructions.push([i, "#{step.instructions} (#{step.distance.text})"])
           step.lat_lngs.forEach (point) ->
-            points.push(point)
-            i += 1
+            unless approxEqual(point, prevPoint)
+              points.push(point)
+              prevPoint = point
+              i += 1
 
       pointsWithBearings = []
       points.forEach (point, i) ->
         if i == 0
           bearing = bearingBetween(point, points[i+1])
         else if i == points.length-1
-          bearing = bearingBetween(points[i-1], point)
-        else if point.equals(points[i-1])
-          bearing = bearingBetween(point, points[i+1])
-        else if point.equals(points[i+1])
           bearing = bearingBetween(points[i-1], point)
         else
           bearing1 = bearingBetween(points[i-1], point)
